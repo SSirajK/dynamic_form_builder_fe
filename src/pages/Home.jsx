@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "../components/Table";
+import { FormTable } from "../components/Table";
+import { Button, Typography, Box, Grid } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
   const [userIsAdmin, setUserIsAdmin] = useState(false);
+  const isAdmin = sessionStorage.getItem("isAdmin");
 
   useEffect(() => {
     const admin = sessionStorage.getItem("isAdmin");
@@ -21,47 +23,43 @@ const Home = () => {
   };
 
   return (
-    <div style={{ marginLeft: "35px", marginTop: "40px", maxWidth: "70%" }}>
-      {userIsAdmin ? (
-        <div>
-          <div style={{ marginBottom: "40px" }}>
-            <h4>Build Form Template</h4>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <button
-                onClick={handleRouteLink}
-                style={{
-                  backgroundColor: "#0073CF",
-                  color: "white",
-                  fontWeight: "bold",
-                  padding: "8px 16px",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
-              >
-                Build Form
-              </button>
-            </div>
-          </div>
-          <div style={{ marginBottom: "40px" }}>
+    <div style={{ marginTop: "40px" }}>
+      <Box p={4} spacing={3}>
+        {userIsAdmin ? (
+          <Box>
+            <Grid
+              container
+              justifyContent="space-between"
+              alignItems="center"
+              mb={3}
+            >
+              <Grid item>
+                <Typography variant="h4" component="h1">
+                  Form
+                </Typography>
+              </Grid>
+              <Grid item>
+                {isAdmin === "true" && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleRouteLink}
+                  >
+                    Build Form
+                  </Button>
+                )}
+              </Grid>
+            </Grid>
             <h4>Form Templates Available</h4>
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <div>
-                <Table viewMetadata={true} />
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div>
-          <h4>Form Available To Fill</h4>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <div>
-              <Table viewMetadata={false} />
-            </div>
-          </div>
-        </div>
-      )}
+            <FormTable viewMetadata={true} />
+          </Box>
+        ) : (
+          <Box>
+            <h4>Form Available To Fill</h4>
+            <FormTable viewMetadata={false} />
+          </Box>
+        )}
+      </Box>
     </div>
   );
 };

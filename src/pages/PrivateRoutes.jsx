@@ -1,6 +1,7 @@
 // pages/PrivateRoutes.js (modified)
 import { Outlet, Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import Navbar from "../components/Navbar";
 
 const PrivateRoutes = () => {
   const user = sessionStorage.getItem("authToken");
@@ -19,7 +20,12 @@ const PrivateRoutes = () => {
     return <Navigate to="/login" replace />;
   }
 
-  return <Outlet />;
+  return (
+    <div>
+      <Navbar />
+      <Outlet />
+    </div>
+  );
 };
 
 export default PrivateRoutes;

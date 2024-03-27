@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Button } from "@mui/material";
 
 const Navbar = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,10 +35,15 @@ const Navbar = () => {
       ) : (
         <nav style={styles.navbar}>
           <div style={styles.navbarContainer}>
-            <span style={styles.navbarText}>Nu10 FormBuilder POC</span>
-            <button style={styles.logoutButton} onClick={handleLogout}>
+            <span style={styles.navbarText}>Nu10 Workflow Builder</span>
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={handleLogout}
+              style={{ marginLeft: "10px" }}
+            >
               Logout
-            </button>
+            </Button>
           </div>
         </nav>
       )}
@@ -60,18 +66,6 @@ const styles = {
   navbarText: {
     fontSize: "28px",
     fontWeight: "bold",
-  },
-  logoutButton: {
-    backgroundColor: "#f00", // Red background color
-    color: "#fff",
-    padding: "10px 20px",
-    borderRadius: "5px",
-    border: "none",
-    cursor: "pointer", // Indicate clickable button
-    transition: "all 0.2s ease-in-out", // Smooth hover effect
-  },
-  "logoutButton:hover": {
-    backgroundColor: "#d00", // Darker red on hover
   },
 };
 

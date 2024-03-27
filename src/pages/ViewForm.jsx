@@ -220,8 +220,9 @@ const ViewForm = () => {
   }, [formData, formUserData]);
 
   const onSubmit = async (formData) => {
-    setIsLoading(true);
+    console.log("came into this");
     if (populatedFormData && !viewMetadata && populatedFormData.length > 0) {
+      setIsLoading(true);
       const formDataWithInfo = {
         formStructure: formData,
       };

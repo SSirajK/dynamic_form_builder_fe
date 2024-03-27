@@ -22,12 +22,20 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Table,
+  TableContainer,
+  TableHead,
+  TableBody,
+  TableCell,
+  Typography,
+  TableRow,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
 
-export const Table = ({ viewMetadata = true }) => {
+export const FormTable = ({ viewMetadata = true }) => {
   const [formData, setFormData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [openDeleteFormDialog, setOpenDeleteFormDialog] = useState(false);
@@ -39,6 +47,7 @@ export const Table = ({ viewMetadata = true }) => {
   const [dataRefreshed, setDataRefreshed] = useState(false);
   const [deeleteConfirmationError, setDeleteConfirmationError] =
     useState(false);
+  const theme = useTheme();
   const [assignedToOptions, setAssignedToOptions] = useState([]);
   const [viewDataOfOptions, setViewDataOfOptions] = useState([]);
   const [openAssignDialog, setOpenAssignDialog] = useState(false);
@@ -47,7 +56,7 @@ export const Table = ({ viewMetadata = true }) => {
   const [viewDataOf, setViewDataOf] = useState("");
   const isAdmin = sessionStorage.getItem("isAdmin");
   const navigate = useNavigate();
-  const postFormBuilder = async () => {
+  const getFormBuilder = async () => {
     const token = sessionStorage.getItem("authToken");
     const config = {
       headers: { Authorization: `Bearer ${token}` },
@@ -67,7 +76,7 @@ export const Table = ({ viewMetadata = true }) => {
   };
   useEffect(() => {
     setIsLoading(true);
-    postFormBuilder();
+    getFormBuilder();
   }, [dataRefreshed]);
   const handleClick = (form) => {
     navigate(`/forms/${form.form_metadata_tbl_name}?id=${form.id}`, {
@@ -152,32 +161,15 @@ export const Table = ({ viewMetadata = true }) => {
 
   //needs to be worked on
   const handleViewFilledUsers = async (form) => {
-    setIsLoading(true);
-    try {
-      const token = sessionStorage.getItem("authToken");
-      const config = {
-        headers: { Authorization: `Bearer ${token}` },
-      };
-      console.log(form, "form");
-      const response = await axios.get(
-        `http://localhost:6004/form-builder/filled-users/${form?.form_data_tbl_name}`,
-        config
-      );
-      // const users = response.data.filter((user) => user.email); // Filter for users with email
-      setViewDataOfOptions(
-        response.data.data.map((user) => ({
-          value: user.id,
-          label: user.email,
-        }))
-      );
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.error(error);
-      // Handle API call errors (e.g., show a snackbar)
-    }
     setSelected(form);
-    setOpenViewDataDialog(true);
+    navigate(`/table-data/${form.form_metadata_tbl_name}?id=${form.id}`, {
+      state: {
+        selectedForm: form,
+        viewMetadata: isAdmin === "true",
+        viewUserData: true,
+      },
+    });
+    // setOpenViewDataDialog(true);
   };
 
   const handleAssignSubmit = async () => {
@@ -246,43 +238,43 @@ export const Table = ({ viewMetadata = true }) => {
   };
 
   // needs to be worked on
-  const handleViewDataSubmit = async () => {
-    if (!viewDataOf) {
-      setSnackbarOpen(true);
-      setSnackbarMessage("Select a user to view data of");
-      setSeverity("error");
-      return;
-    }
-    const selectedUser = viewDataOfOptions.find(
-      (user) => user.value === viewDataOf
-    );
-    console.log(selectedUser);
-    if (!selectedUser) {
-      console.error("Selected user not found in options");
-      setIsLoading(false);
-      setOpenAssignDialog(false);
-      setSnackbarOpen(true);
-      setSnackbarMessage("An error occurred during selection");
-      setSeverity("error");
-      return;
-    }
-    const userId = selectedUser.value;
-    const name = selectedUser.label;
-    setIsLoading(true);
+  // const handleViewDataSubmit = async () => {
+  //   if (!viewDataOf) {
+  //     setSnackbarOpen(true);
+  //     setSnackbarMessage("Select a user to view data of");
+  //     setSeverity("error");
+  //     return;
+  //   }
+  //   const selectedUser = viewDataOfOptions.find(
+  //     (user) => user.value === viewDataOf
+  //   );
+  //   console.log(selectedUser);
+  //   if (!selectedUser) {
+  //     console.error("Selected user not found in options");
+  //     setIsLoading(false);
+  //     setOpenAssignDialog(false);
+  //     setSnackbarOpen(true);
+  //     setSnackbarMessage("An error occurred during selection");
+  //     setSeverity("error");
+  //     return;
+  //   }
+  //   const userId = selectedUser.value;
+  //   const name = selectedUser.label;
+  //   setIsLoading(true);
 
-    const token = sessionStorage.getItem("authToken");
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
-    const userMapping = [
-      {
-        userId: userId,
-        // name: name,
-      },
-    ];
-    selected.userId = userId;
-    handleEyeClick(selected);
-  };
+  //   const token = sessionStorage.getItem("authToken");
+  //   const config = {
+  //     headers: { Authorization: `Bearer ${token}` },
+  //   };
+  //   const userMapping = [
+  //     {
+  //       userId: userId,
+  //       // name: name,
+  //     },
+  //   ];
+  //   selected.userId = userId;
+  //   handleEyeClick(selected);
+  // };
 
   const formatDate = (dateString) => {
     const options = {
@@ -317,95 +309,130 @@ export const Table = ({ viewMetadata = true }) => {
           <CircularProgress size={100} />
         </div>
       ) : (
-        <div className="table-wrapper">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Form Name</th>
-                <th>Form Id</th>
-                <th className="expand">Description</th>
-                <th>Action</th>
-                <th>{isAdmin === "true" ? "Created By" : "Assigned By"}</th>
-                <th>{isAdmin === "true" ? "Created At" : "Assigned At"}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {formData?.map((form) => (
-                <tr key={form.id}>
-                  {/* Access form data using object properties */}
-                  <td>{form.form_title}</td>
-                  <td>{form.id}</td>
-                  <td className="expand">
-                    {form?.formDescription ? form?.formDescription : "NA"}
-                  </td>
-                  <td>
-                    {isAdmin && isAdmin === "true" ? (
-                      <span className="actions">
-                        <BsFillTrashFill
-                          className="delete-btn"
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "2px",
-                          }}
-                          onClick={() => {
-                            setOpenDeleteFormDialog({ open: true });
-                            setSelected(form);
-                          }}
-                        />
-                        <BsFillPencilFill
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "2px",
-                          }}
-                          onClick={() => handleEditClick(form)}
-                        />
-                        <BsPersonPlusFill
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "2px",
-                          }}
-                          onClick={() => handleAssignClick(form)}
-                        />
-                        <BsFillEyeFill
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "2px",
-                          }}
-                          onClick={() => handleClick(form)}
-                        />
-                        <BsDatabaseFillDown
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "2px",
-                          }}
-                          onClick={() => handleViewFilledUsers(form)}
-                        />
-                      </span>
-                    ) : (
-                      <span className="actions">
-                        <BsFillPencilFill
-                          onClick={() => handleClick(form)}
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "2px",
-                          }}
-                        />
-                        <BsFillEyeFill
-                          style={{
-                            cursor: "pointer",
-                            marginRight: "2px",
-                          }}
-                          onClick={() => handleEyeClick(form)}
-                        />
-                      </span>
-                    )}
-                  </td>
-                  <td>{form.createdBy}</td>
-                  <td>{formatDate(form.createdAt)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div>
+          <TableContainer sx={{ borderCollapse: "collapse" }}>
+            <Table>
+              <TableHead sx={{ backgroundColor: theme.palette.primary.main }}>
+                <TableRow>
+                  <TableCell align="center">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Form Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Form Id
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Description
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      Action
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {isAdmin === "true" ? "Created By" : "Assigned By"}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {isAdmin === "true" ? "Created At" : "Assigned At"}{" "}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {formData?.map((form) => (
+                  <TableRow
+                    key={form.id}
+                    sx={{
+                      "&:nth-child(odd)": {
+                        backgroundColor: theme.palette.action.hover,
+                      },
+                    }}
+                  >
+                    {/* Access form data using object properties */}
+                    <TableCell align="center">{form.form_title}</TableCell>
+                    <TableCell align="center">{form.id}</TableCell>
+                    <TableCell align="center">
+                      {form?.formDescription ? form?.formDescription : "NA"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {isAdmin && isAdmin === "true" ? (
+                        <span className="actions">
+                          <BsFillTrashFill
+                            className="delete-btn"
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "2px",
+                            }}
+                            onClick={() => {
+                              setOpenDeleteFormDialog({ open: true });
+                              setSelected(form);
+                            }}
+                          />
+                          <BsFillPencilFill
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "2px",
+                            }}
+                            onClick={() => handleEditClick(form)}
+                          />
+                          <BsPersonPlusFill
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "2px",
+                            }}
+                            onClick={() => handleAssignClick(form)}
+                          />
+                          <BsFillEyeFill
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "2px",
+                            }}
+                            onClick={() => handleClick(form)}
+                          />
+                          <BsDatabaseFillDown
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "2px",
+                            }}
+                            onClick={() => handleViewFilledUsers(form)}
+                          />
+                        </span>
+                      ) : (
+                        <span className="actions">
+                          <BsFillPencilFill
+                            onClick={() => handleClick(form)}
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "2px",
+                            }}
+                          />
+                          <BsFillEyeFill
+                            style={{
+                              cursor: "pointer",
+                              marginRight: "2px",
+                            }}
+                            onClick={() => handleEyeClick(form)}
+                          />
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell align="center">{form.createdBy}</TableCell>
+                    <TableCell align="center">
+                      {formatDate(form.createdAt)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
       )}
       <Dialog
@@ -481,7 +508,7 @@ export const Table = ({ viewMetadata = true }) => {
           <Button onClick={handleAssignSubmit}>Assign</Button>
         </DialogActions>
       </Dialog>
-      <Dialog
+      {/* <Dialog
         open={openViewDataDialog}
         onClose={() => setOpenViewDataDialog(false)}
         sx={{ minWidth: "400px" }}
@@ -509,7 +536,7 @@ export const Table = ({ viewMetadata = true }) => {
           <Button onClick={() => setOpenViewDataDialog(false)}>Cancel</Button>
           <Button onClick={handleViewDataSubmit}>Submit</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={3000}

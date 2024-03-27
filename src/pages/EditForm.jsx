@@ -29,10 +29,18 @@ const EditForm = () => {
         ) {
           acc[key] = false;
         } else if (
+          key === "options" ||
+          (key === "childItems" && value === null)
+        ) {
+          console.log(key, "options key");
+          acc[key] = [];
+        } else if (
           typeof value === "string" &&
           value.toLocaleLowerCase() === "null"
         ) {
           acc[key] = null;
+        } else if (value === null) {
+          acc[key] = "";
         } else {
           acc[key] = value;
         }
@@ -50,6 +58,7 @@ const EditForm = () => {
         `http://localhost:6004/form-builder/${selectedForm.form_metadata_tbl_name}?id=${selectedForm.id}`,
         config
       );
+      console.log(response.data);
       const responseBooleanConversion = booleanConversion(response?.data?.data);
       const parsedData = responseBooleanConversion.map((item) => {
         // Create a new object to hold parsed values
@@ -100,6 +109,7 @@ const EditForm = () => {
       }
     };
     fetchDataToRender();
+    console.log(formData);
   }, []);
   const handleSubmit = async (formData) => {
     console.log(formData, "formdetails");
@@ -140,7 +150,7 @@ const EditForm = () => {
           onSubmit={handleSubmit}
           form_action="/"
           form_method="POST"
-          data={formData}
+          onLoad={() => Promise.resolve(formData)}
         />
       </div>
     </div>

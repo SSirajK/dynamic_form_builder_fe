@@ -2,7 +2,6 @@ import React from "react";
 import { ReactFormGenerator, ElementStore } from "react-form-builder2";
 import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBackIosNew } from "react-icons/md";
@@ -193,7 +192,9 @@ function Demobar(props) {
         Back
       </button>
       <div className="clearfix" style={{ margin: "10px", width: "70%" }}>
-        <h4 className="float-left">Form Builder </h4>
+        <h4 className="float-left">
+          {props?.form_title ? props?.form_title : "Form Builder"}{" "}
+        </h4>
 
         <button
           className="btn btn-primary float-right"

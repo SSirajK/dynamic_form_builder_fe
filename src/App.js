@@ -7,6 +7,7 @@ import ViewForm from "./pages/ViewForm";
 import EditForm from "./pages/EditForm";
 import Login from "./pages/Login";
 import PrivateRoutes from "./pages/PrivateRoutes";
+import ViewFormData from "./pages/ViewFormData";
 
 const App = () => {
   // useEffect(() => {
@@ -15,7 +16,6 @@ const App = () => {
 
   return (
     <>
-      <Navbar />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -29,6 +29,10 @@ const App = () => {
             <Route
               path="/forms/edit/:form_metadata_tbl_name"
               element={<EditForm />}
+            />
+            <Route
+              path="/table-data/:form_metadata_tbl_name"
+              element={<ViewFormData />}
             />
           </Route>
         </Routes>
