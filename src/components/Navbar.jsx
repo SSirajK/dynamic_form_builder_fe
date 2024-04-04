@@ -35,7 +35,7 @@ const Navbar = () => {
       ) : (
         <nav style={styles.navbar}>
           <div style={styles.navbarContainer}>
-            <span style={styles.navbarText}>Nu10 Workflow Builder</span>
+            <span style={styles.navbarText}>Nu10 Form Builder</span>
             <Button
               variant="contained"
               color="warning"

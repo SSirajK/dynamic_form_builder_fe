@@ -6,20 +6,18 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { ReactFormGenerator } from "react-form-builder2";
-import { Snackbar, Alert, Typography, Button } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 import axios from "axios";
 import { MdArrowBackIosNew } from "react-icons/md";
 import CircularProgress from "@mui/material/CircularProgress";
 
-const ViewForm = (state) => {
+const ViewForm = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
-  const selectedForm = state?.selectedForm && state?.selectedForm || location.state?.selectedForm;
-  const viewMetadata = state?.viewUserData && state?.viewMetadata || location.state?.viewMetadata || false;
-  const viewUserData = state?.viewUserData && state?.viewUserData || location.state?.viewUserData || false;
-  const userId = state?.selectedForm?.userId && state?.selectedForm?.userId || location?.state?.selectedForm?.userId;
-  const formName = state?.selectedForm?.form_title && state?.selectedForm?.form_title || location?.state?.selectedForm?.form_title;
-  const handleSubmitView = state?.handleSubmitView || null;
+  const selectedForm = location.state?.selectedForm;
+  const viewMetadata = location.state?.viewMetadata;
+  const viewUserData = location.state?.viewUserData;
+  const userId = location?.state?.selectedForm?.userId;
   const formId = searchParams.get("id");
   const [formData, setFormData] = useState(null);
   const [formUserData, setFormUserData] = useState(null);
@@ -30,7 +28,7 @@ const ViewForm = (state) => {
   const navigate = useNavigate();
   const [populatedFormData, setPopulatedFormData] = useState(null);
   const props = {};
-  console.log("viewmetadata", viewMetadata, viewUserData);
+  console.log("viewmetadata", viewMetadata);
 
   const booleanConversion = (conversionData) => {
     return conversionData.map((obj) => {
@@ -72,7 +70,7 @@ const ViewForm = (state) => {
           `No metadata found for form ${selectedForm.form_metadata_tbl_name}`
         );
         setSeverity("error");
-        !state?.selectedForm && navigate("/");
+        navigate("/");
       }
       const parsedData = responseBooleanConversion.map((item) => {
         // Create a new object to hold parsed values
@@ -104,7 +102,7 @@ const ViewForm = (state) => {
       setSnackbarOpen(true);
       setSnackbarMessage("Failed to fetch form metadata");
       setSeverity("error");
-      !state?.selectedForm && navigate("/");
+      navigate("/");
       console.log(error);
     }
   };
@@ -213,7 +211,7 @@ const ViewForm = (state) => {
   }, []);
 
   const gotoHome = () => {
-    !state?.selectedForm && navigate("/");
+    navigate("/");
   };
   useEffect(() => {
     if (formData && formUserData) {
@@ -246,8 +244,7 @@ const ViewForm = (state) => {
               setSnackbarOpen(true);
               setSnackbarMessage(response?.data?.message);
               setSeverity("success");
-              !state?.selectedForm && navigate("/");
-              state?.selectedForm && handleSubmitView()
+              navigate("/");
             },
             (error) => {
               console.log(error);
@@ -286,8 +283,7 @@ const ViewForm = (state) => {
               setSnackbarOpen(true);
               setSnackbarMessage(response?.data?.message);
               setSeverity("success");
-              !state?.selectedForm && navigate("/");
-              handleSubmitView()
+              navigate("/");
             },
             (error) => {
               console.log(error);
@@ -330,7 +326,7 @@ const ViewForm = (state) => {
       const capitalizedEachId = capitalizeLetters(element[tableNameId]);
       const name = formData.find(
         (item) => item.id === capitalizedEachId
-      )?.field_name;
+      ).field_name;
 
       return {
         id: capitalizedEachId,
@@ -344,11 +340,6 @@ const ViewForm = (state) => {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
-
-  const handleChangeFormSubmit = (e) => {
-    console.log(e, "event")
-    console.log(e?.target?.value, "value in the target")
-  }
 
   return isLoading ? (
     <div
@@ -370,19 +361,15 @@ const ViewForm = (state) => {
       <CircularProgress size={100} />
     </div>
   ) : !isLoading && populatedFormData ? (
-    <div style={{ margin: "20px" }}>
-      {!state?.selectedForm && <Button
-        variant="text"
+    <div style={{ margin: "20px auto", maxWidth: "70%" }}>
+      <button
         className="btn btn-default p-0"
         style={{ display: "flex", alignItems: "center" }}
         onClick={gotoHome}
       >
         <MdArrowBackIosNew />
         Back
-      </Button>}
-      <Typography variant="h4" component="h1">
-        {formName}
-      </Typography>
+      </button>
       <ReactFormGenerator
         download_path=""
         // back_action="/"
@@ -391,8 +378,8 @@ const ViewForm = (state) => {
           viewMetadata && userId
             ? populatedFormData
             : !viewMetadata
-              ? populatedFormData
-              : {}
+            ? populatedFormData
+            : {}
         }
         action_name={
           !viewMetadata && populatedFormData && populatedFormData?.length > 0
@@ -402,14 +389,6 @@ const ViewForm = (state) => {
         form_action="/"
         form_method="POST"
         onSubmit={onSubmit}
-        onChange={(e)=>handleChangeFormSubmit(e)}
-        // submitButton={<Button
-        //   variant="contained"
-        //   color="primary"
-        //   style={{ marginLeft: "10px" }}
-        // >
-        //   Submit
-        // </Button>}
         variables={props}
         read_only={viewUserData ? true : false}
         hide_actions={viewUserData}
@@ -427,19 +406,14 @@ const ViewForm = (state) => {
     </div>
   ) : (
     <div style={{ margin: "20px auto", maxWidth: "70%" }}>
-
-      {!state && <Button
+      <button
         className="btn btn-default float-right"
-        variant="text"
         style={{ marginRight: "10px" }}
         onClick={gotoHome}
       >
         <MdArrowBackIosNew />
         Back
-      </Button>}
-      <Typography variant="h4" component="h1">
-        {formName}
-      </Typography>
+      </button>
       <ReactFormGenerator
         download_path=""
         // back_action="/"
@@ -450,13 +424,6 @@ const ViewForm = (state) => {
         form_method="POST"
         onSubmit={onSubmit}
         variables={props}
-        // submitButton={<Button
-        //   variant="contained"
-        //   color="primary"
-        //   style={{ marginLeft: "10px" }}
-        // >
-        //   Submit
-        // </Button>}
         hide_actions={viewMetadata}
         data={formData}
       />

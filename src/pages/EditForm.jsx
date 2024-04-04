@@ -6,10 +6,9 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import axios from "axios";
-import { ReactFormBuilder } from "react-form-builder2";
+import { ReactFormBuilder, FormElementsEdit } from "react-form-builder2";
 import CircularProgress from "@mui/material/CircularProgress";
 import Demobar from "../components/demobar";
-import FormElementsEdit from "../components/FormElementsEdit";
 
 const EditForm = () => {
   const [searchParams] = useSearchParams();
@@ -30,17 +29,10 @@ const EditForm = () => {
         ) {
           acc[key] = false;
         } else if (
-          (key === "options" && value === null) ||
-          (key === "childItems" && value === null)
-        ) {
-          acc[key] = [];
-        } else if (
           typeof value === "string" &&
           value.toLocaleLowerCase() === "null"
         ) {
           acc[key] = null;
-        } else if (value === null) {
-          acc[key] = "";
         } else {
           acc[key] = value;
         }
@@ -58,15 +50,13 @@ const EditForm = () => {
         `http://localhost:6004/form-builder/${selectedForm.form_metadata_tbl_name}?id=${selectedForm.id}`,
         config
       );
-      console.log(response.data, "getting the data");
-      const parsedData = response?.data?.data.map((item) => {
+      const responseBooleanConversion = booleanConversion(response?.data?.data);
+      const parsedData = responseBooleanConversion.map((item) => {
         // Create a new object to hold parsed values
         const parsedItem = {};
 
         // Iterate over each key-value pair in the item
         for (const [key, value] of Object.entries(item)) {
-          console.log(item, "item", value)
-          console.log(isJson(value), "value for is json")
           if (isJson(value)) {
             try {
               // Parse JSON if it's a string and valid JSON
@@ -85,10 +75,7 @@ const EditForm = () => {
 
         return parsedItem; // Return the updated object with parsed values
       });
-      const responseBooleanConversion = booleanConversion(parsedData);
-
-      console.log(responseBooleanConversion, "response")
-      setFormData(responseBooleanConversion);
+      setFormData(parsedData);
     } catch (error) {
       console.log(error);
     }
@@ -153,8 +140,7 @@ const EditForm = () => {
           onSubmit={handleSubmit}
           form_action="/"
           form_method="POST"
-          renderEditForm={props => <FormElementsEdit {...props} />}
-          onLoad={() => Promise.resolve(formData)}
+          data={formData}
         />
       </div>
     </div>

@@ -7,10 +7,6 @@ import ViewForm from "./pages/ViewForm";
 import EditForm from "./pages/EditForm";
 import Login from "./pages/Login";
 import PrivateRoutes from "./pages/PrivateRoutes";
-import ViewFormData from "./pages/ViewFormData";
-import Workflow from "./pages/WorkflowTabs/workFlowData";
-import WorkflowBuilder from "./pages/WorkflowTabs/WorkflowTabs";
-import WorkflowForms from "./pages/WorkflowTabs/WorkflowForms";
 
 const App = () => {
   // useEffect(() => {
@@ -19,6 +15,7 @@ const App = () => {
 
   return (
     <>
+      <Navbar />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -33,13 +30,6 @@ const App = () => {
               path="/forms/edit/:form_metadata_tbl_name"
               element={<EditForm />}
             />
-            <Route
-              path="/table-data/:form_metadata_tbl_name"
-              element={<ViewFormData />}
-            />
-            <Route path="/create-workflow" element={<WorkflowBuilder />} />
-            <Route path="/workflow/:workflow_id" element={<Workflow />} />
-            <Route path="/workflow-forms/:workflow_id" element={<WorkflowForms />} />
           </Route>
         </Routes>
       </BrowserRouter>

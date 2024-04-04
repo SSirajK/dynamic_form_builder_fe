@@ -457,11 +457,10 @@ export const FormTable = ({ viewMetadata = true }) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" color="error" onClick={() => setOpenDeleteFormDialog({ open: false })}>
+          <Button onClick={() => setOpenDeleteFormDialog({ open: false })}>
             Cancel
           </Button>
           <Button
-            variant="contained"
             onClick={() => {
               const edgeId = openDeleteFormDialog?.edgeId;
               if (deleteConfirmation === "DELETE") {
@@ -474,7 +473,7 @@ export const FormTable = ({ viewMetadata = true }) => {
                 setSeverity("error");
               }
             }}
-            color="primary"
+            color="error"
           >
             PROCEED
           </Button>
@@ -505,8 +504,8 @@ export const FormTable = ({ viewMetadata = true }) => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button variant="outlined" color="error" onClick={() => setOpenAssignDialog(false)}>Cancel</Button>
-          <Button variant="contained" color="primary" onClick={handleAssignSubmit}>Assign</Button>
+          <Button onClick={() => setOpenAssignDialog(false)}>Cancel</Button>
+          <Button onClick={handleAssignSubmit}>Assign</Button>
         </DialogActions>
       </Dialog>
       {/* <Dialog

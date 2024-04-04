@@ -1,14 +1,14 @@
 import React from "react";
 import { ReactFormGenerator, ElementStore } from "react-form-builder2";
 import axios from "axios";
-import { Snackbar, Alert, Button } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdArrowBackIosNew } from "react-icons/md";
 
 function Demobar(props) {
   const [data, setData] = useState(props && props?.data ? props?.data : []);
-  console.log(props, "create form props")
   const [previewVisible, setPreviewVisible] = useState(false);
   const [shortPreviewVisible, setShortPreviewVisible] = useState(false);
   const [roPreviewVisible, setRoPreviewVisible] = useState(false);
@@ -19,8 +19,6 @@ function Demobar(props) {
   const [description, setDescription] = useState();
   const form_id = props?.form_id && props?.form_id;
   let navigate = useNavigate();
-  const workflow = props?.state?.workflow && props?.state?.workflow;
-  const node_id = props?.state?.node && props?.state?.node;
 
   const onUpdate = (newData) => {
     setData(newData);
@@ -133,34 +131,12 @@ function Demobar(props) {
             formDataWithInfo,
             config
           );
-          const responseData = await response?.data?.data;
-          console.log(responseData)
-          if (responseData) {
+          if (response) {
             console.log(response?.data?.message);
             setSnackbarOpen(true);
             setSnackbarMessage(response?.data?.message);
             setSeverity("success");
             closePreview();
-            if (workflow && node_id) {
-              try {
-                const token = sessionStorage.getItem("authToken");
-
-                const config = {
-                  headers: { Authorization: `Bearer ${token}` },
-                };
-                const response = await axios.post(`http://localhost:6004/workflow-revised/mapping`, { workflow_id: workflow, node_id: node_id, form_builder_id: responseData?.id }, config);
-                const data = response?.data?.data;
-                console.log(data, "data")
-                setSnackbarOpen(true)
-                setSnackbarMessage(response?.data?.message || "form assigned to workflow")
-                setSeverity("success")
-              } catch (error) {
-                setSnackbarOpen(true)
-                setSnackbarMessage(error?.response?.data?.message || "failed to assign form")
-                setSeverity("error")
-                console.error('Error fetching forms:', error);
-              }
-            }
             navigate("/");
           }
         }
@@ -208,29 +184,24 @@ function Demobar(props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-      <Button
+      <button
         className="btn btn-default float-left"
         style={{ display: "flex", width: "90px", alignItems: "center" }}
         onClick={gotoHome}
-        variant="text"
       >
         <MdArrowBackIosNew />
         Back
-      </Button>
+      </button>
       <div className="clearfix" style={{ margin: "10px", width: "70%" }}>
-        <h4 className="float-left">
-          {props?.form_title ? props?.form_title : "Form Builder"}{" "}
-        </h4>
+        <h4 className="float-left">Form Builder </h4>
 
-        <Button
+        <button
           className="btn btn-primary float-right"
-          variant="contained"
-          color="primary"
           style={{ marginRight: "10px" }}
           onClick={showShortPreview}
         >
           Save Template
-        </Button>
+        </button>
         {/* <button
         className="btn btn-default float-right"
         style={{ marginRight: "10px" }}
@@ -238,15 +209,13 @@ function Demobar(props) {
       >
         Save Template Draft
       </button> */}
-        <Button
+        <button
           className="btn btn-default float-right"
           style={{ marginRight: "10px" }}
-          variant="outlined"
-          color="secondary"
           onClick={showPreview}
         >
           Preview Form
-        </Button>
+        </button>
         {/*jdjdjdjdj*/}
 
         {previewVisible && (
@@ -264,13 +233,6 @@ function Demobar(props) {
                   onSubmit={onSubmit}
                   variables={props.variables}
                   hide_actions={false}
-                  // submitButton={<Button
-                  //   variant="contained"
-                  //   color="primary"
-                  //   style={{ margin: "10px" }}
-                  // >
-                  //   Submit
-                  // </Button>}
                   data={data}
                 />
 
@@ -315,16 +277,14 @@ function Demobar(props) {
                     />
                   </div> */}
 
-                    <Button
+                    <button
                       type="button"
                       className="btn btn-default"
                       data-dismiss="modal"
-                      variant="outlined"
-                      color="error"
                       onClick={closePreview}
                     >
                       Close
-                    </Button>
+                    </button>
                   </form>
                 </div>
               </div>
@@ -346,28 +306,19 @@ function Demobar(props) {
                   form_method="POST"
                   read_only={true}
                   variables={props.variables}
-                  // submitButton={<Button
-                  //   variant="contained"
-                  //   color="primary"
-                  //   style={{ marginLeft: "10px" }}
-                  // >
-                  //   Submit
-                  // </Button>}
                   hide_actions={true}
                   data={data}
                 />
 
                 <div className="modal-footer">
-                  <Button
+                  <button
                     type="button"
                     className="btn btn-default"
                     data-dismiss="modal"
-                    color="error"
-                    variant="outlined"
                     onClick={closePreview}
                   >
                     Close
-                  </Button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -390,13 +341,6 @@ function Demobar(props) {
                     read_only={true}
                     variables={props.variables}
                     hide_actions={true}
-                    // submitButton={<Button
-                    //   variant="contained"
-                    //   color="primary"
-                    //   style={{ marginLeft: "10px" }}
-                    // >
-                    //   Submit
-                    // </Button>}
                     data={data}
                   />
                   {/* <ReactFormGenerator
@@ -457,26 +401,24 @@ function Demobar(props) {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Button
+                      <button
                         type="button"
                         className="btn btn-default"
                         // data-dismiss="modal"
                         onClick={onSave}
-                        variant="contained"
-                        color="primary"
+                        style={{ color: "#1976d2" }}
                       >
                         Save
-                      </Button>
-                      <Button
+                      </button>
+                      <button
                         type="button"
                         className="btn btn-default"
                         data-dismiss="modal"
-                        variant="outlined"
                         onClick={closePreview}
-                        color="error"
+                        style={{ color: "#d32f2f" }}
                       >
                         Close
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 </div>
