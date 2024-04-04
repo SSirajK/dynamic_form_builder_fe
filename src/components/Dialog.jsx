@@ -18,9 +18,10 @@ const DynamicDialog = ({
   disabled,
   children,
   sx,
+  noSubmit,
 }) => {
   const [open, setOpen] = useState(isOpen);
-  console.log(sx, "children");
+  console.log(sx, "children", disabled);
   const [values, setValues] = useState(initialValues || {});
   useEffect(() => {
     setOpen(isOpen);
@@ -86,7 +87,7 @@ const DynamicDialog = ({
                 Open Dialog
             </Button> */}
       <Dialog
-        sx={{ maxWidth: "100vw" }}
+        sx={{ maxWidth: "100vw", maxHeight: '90vh', alignItems: 'center' }}
         open={open}
         onClose={handleClose}
         disableEscapeKeyDown={true}
@@ -95,10 +96,10 @@ const DynamicDialog = ({
         <DialogTitle>{title}</DialogTitle>
         <DialogContent sx={sx}>{children || formFields}</DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
+          <Button variant="outlined" color="error" onClick={handleClose}>Cancel</Button>
+          {!noSubmit && <Button variant="contained" color="primary" onClick={handleSubmit}>
             {submitButtonLabel || "Submit"}
-          </Button>
+          </Button>}
         </DialogActions>
       </Dialog>
     </div>

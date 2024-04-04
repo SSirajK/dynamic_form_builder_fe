@@ -3,7 +3,8 @@ import DynamicTable from "../components/DynamicTable";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Grid, Typography, Box } from "@mui/material";
+import { Grid, Typography, Box, Button } from "@mui/material";
+import { MdArrowBackIosNew } from "react-icons/md";
 
 const ViewFormData = () => {
   const location = useLocation();
@@ -35,61 +36,7 @@ const ViewFormData = () => {
         // navigate("/");
       }
       //   setIsLoading(false);
-      const resNodata = [
-        {
-          Email: "pranjali@gmail.com",
-          data: [
-            {
-              label: "first name",
-              value: "pranjali",
-              content: "",
-              field_name: "somefield",
-            },
-            {
-              label: "number",
-              value: 9875611245,
-              content: "",
-              field_name: "somefield",
-            },
-            {
-              label: "last name",
-              value: "Yadav",
-              content: "",
-              field_name: "somefield",
-            },
-          ],
-        },
-        {
-          Email: "sankar@gmail.com",
-          data: [
-            {
-              label: "first name",
-              value: "Sankar",
-              content: "",
-              field_name: "somefield",
-            },
-            {
-              label: "number",
-              value: 9999999999,
-              content: "",
-              field_name: "somefield",
-            },
-            {
-              label: "last name",
-              value: "M",
-              content: "",
-              field_name: "somefield",
-            },
-            {
-              label: "gender",
-              value: "Male",
-              content: "",
-              field_name: "other field",
-            },
-          ],
-        },
-      ];
-      const responseData = response?.data?.data || resNodata;
+      const responseData = response?.data?.data;
       const transformedData = Object.keys(responseData).map((email) => {
         const dataObject = responseData[email].reduce((acc, current) => {
           acc[current.label.trim()] = current.value;
@@ -114,6 +61,10 @@ const ViewFormData = () => {
     getData();
   }, []);
 
+  const gotoHome = () => {
+    navigate("/");
+  };
+
   return (
     <>
       {isLoading ? (
@@ -137,6 +88,15 @@ const ViewFormData = () => {
         </div>
       ) : (
         <Box p={4} spacing={3}>
+          <Button
+            className="btn btn-default float-left"
+            variant="text"
+            style={{ display: "flex", width: "90px", alignItems: "center" }}
+            onClick={gotoHome}
+          >
+            <MdArrowBackIosNew />
+            Back
+          </Button>
           <Grid
             container
             justifyContent="space-between"
@@ -145,7 +105,7 @@ const ViewFormData = () => {
           >
             <Grid item>
               <Typography variant="h4" component="h1">
-                Workflow
+                Form Data
               </Typography>
             </Grid>
           </Grid>
